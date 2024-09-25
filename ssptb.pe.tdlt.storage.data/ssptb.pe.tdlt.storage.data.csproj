@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Couchbase.Extensions.DependencyInjection" Version="3.6.3" />
+    <PackageReference Include="CouchbaseNetClient" Version="3.6.3" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ssptb.pe.tdlt.storage.command\ssptb.pe.tdlt.storage.command.csproj" />
+    <ProjectReference Include="..\ssptb.pe.tdlt.storage.common\ssptb.pe.tdlt.storage.common.csproj" />
+    <ProjectReference Include="..\ssptb.pe.tdlt.storage.entities\ssptb.pe.tdlt.storage.entities.csproj" />
+    <ProjectReference Include="..\ssptb.pe.tdlt.storage.secretsmanager\ssptb.pe.tdlt.storage.secretsmanager.csproj" />
+  </ItemGroup>
+
+</Project>

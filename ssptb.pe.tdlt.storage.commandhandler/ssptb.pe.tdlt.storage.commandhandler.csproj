@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Mapster" Version="7.4.0" />
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ssptb.pe.tdlt.storage.command\ssptb.pe.tdlt.storage.command.csproj" />
+    <ProjectReference Include="..\ssptb.pe.tdlt.storage.common\ssptb.pe.tdlt.storage.common.csproj" />
+    <ProjectReference Include="..\ssptb.pe.tdlt.storage.data\ssptb.pe.tdlt.storage.data.csproj" />
+    <ProjectReference Include="..\ssptb.pe.tdlt.storage.internalservices\ssptb.pe.tdlt.storage.internalservices.csproj" />
+    <ProjectReference Include="..\ssptb.pe.tdlt.storage.redis\ssptb.pe.tdlt.storage.redis.csproj" />
+    <ProjectReference Include="..\ssptb.pe.tdlt.storage.secretsmanager\ssptb.pe.tdlt.storage.secretsmanager.csproj" />
+  </ItemGroup>
+
+</Project>
