@@ -1,0 +1,27 @@
+# fly.toml app configuration file generated for ssptb-pe-tdlt-storage-service on 2024-10-28T23:48:22-05:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'ssptb-pe-tdlt-storage-service'
+primary_region = 'scl'
+
+[build]
+
+[http_service]
+  internal_port = 80
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+[[services]]
+  internal_port = 80
+  protocol = "tcp"
+
+  [[services.ports]]
+    port = 80
+    start_port = 80
+    end_port = 80
+    handlers = ["tls", "http"]

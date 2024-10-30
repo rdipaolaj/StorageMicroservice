@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ssptb.pe.tdlt.storage.common.Helpers;
 using ssptb.pe.tdlt.storage.common.Settings;
 using StackExchange.Redis;
 using System;
@@ -21,16 +22,17 @@ internal class RedisService : IRedisService
     /// Interfaz para acceso a la base de datos de redis
     /// </summary>
     private readonly IDatabase _database;
-
+    private readonly RedisKeySettings _redisKeySettings;
     private readonly ILogger<RedisService> _logger;
 
     /// <summary>
     /// Constructor de servicio de acceso a Redis
     /// </summary>
     /// <param name="_settigs">Settings de configuracion de Redis</param>
-    public RedisService(IOptions<RedisSettings> _settigs, ILogger<RedisService> logger)
+    public RedisService(IOptions<RedisSettings> _settigs, IOptions<RedisKeySettings> redisKeySettings, ILogger<RedisService> logger)
     {
         _logger = logger;
+        _redisKeySettings = redisKeySettings.Value;
 
         var config = new ConfigurationOptions
         {
@@ -39,6 +41,11 @@ internal class RedisService : IRedisService
             Ssl = !_settigs.Value.Local,
             AllowAdmin = true,
         };
+
+        if (!EnvironmentHelper.IsDevelopment())
+        {
+            config.Password = _redisKeySettings.PrivateKey;
+        }
 
         _logger.LogInformation("Configuración Redis => EndPoint: {Endpoint}, Ssl: {Ssl}", _settigs.Value.Endpoint, config.Ssl);
 

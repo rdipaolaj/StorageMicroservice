@@ -14,7 +14,7 @@ public class HealthController : ControllerBase
     }
 
     [HttpGet]
-    [Route("health-couchbase")]
+    [Route("health-mongodb")]
     public async Task<IActionResult> GetHealth()
     {
         var report = await _healthCheckService.CheckHealthAsync();

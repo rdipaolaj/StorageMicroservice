@@ -59,7 +59,9 @@ public static class ProgramExtesions
         var secretManagerService = (ISecretManagerService)serviceProvider.GetService(typeof(ISecretManagerService));
 
         CouchBaseSecrets secretsCouchBase = secretManagerService.GetCouchBaseSecrets().GetAwaiter().GetResult();
+        MongoDbSecrets secretsMongoDb = secretManagerService.GetMongoDbSecrets().GetAwaiter().GetResult();
         CloudinarySecrets secretsCloudinary = secretManagerService.GetCloudinarySecrets().GetAwaiter().GetResult();
+        RedisSecrets redisSecrets = secretManagerService.GetRedisSecrets().GetAwaiter().GetResult();
 
         services.Configure<CouchBaseSettings>(options =>
         {
@@ -69,11 +71,21 @@ public static class ProgramExtesions
             options.Password = secretsCouchBase.Password;
         });
 
+        services.Configure<MongoDbSettings>(options =>
+        {
+            options.ConnectionString = secretsMongoDb.ConnectionString;
+        });
+
         services.Configure<CloudinarySettings>(options =>
         {
             options.CloudName = secretsCloudinary.CloudName;
             options.ApiSecret = secretsCloudinary.ApiSecret;
             options.ApiKey = secretsCloudinary.ApiKey;
+        });
+
+        services.Configure<RedisKeySettings>(options =>
+        {
+            options.PrivateKey = redisSecrets.PrivateKey;
         });
 
         return services;
@@ -129,7 +141,7 @@ public static class ProgramExtesions
     public static IServiceCollection AddDatabaseHealthCheck(this IServiceCollection services)
     {
         services.AddHealthChecks()
-            .AddCheck<CouchBaseHealthCheck>("CouchBase");
+            .AddCheck<MongoDBHealthCheck>("MongoDB");
 
         return services;
     }
