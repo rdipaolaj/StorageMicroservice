@@ -25,8 +25,14 @@ internal class SecretManagerService : ISecretManagerService
     public async Task<CouchBaseSecrets?> GetCouchBaseSecrets()
         => await GetSecret<CouchBaseSecrets>(_settings.Value.ArnCouchBaseSecrets);
 
+    public async Task<MongoDbSecrets?> GetMongoDbSecrets()
+        => await GetSecret<MongoDbSecrets>(_settings.Value.ArnMongoDBSecrets);
+
     public async Task<CloudinarySecrets?> GetCloudinarySecrets()
         => await GetSecret<CloudinarySecrets>(_settings.Value.ArnCloudinarySecrets);
+
+    public async Task<RedisSecrets?> GetRedisSecrets()
+        => await GetSecret<RedisSecrets>(_settings.Value.ArnRedisSecrets);
 
     private async Task<T?> GetSecret<T>(string arn) where T : ISecret
     {

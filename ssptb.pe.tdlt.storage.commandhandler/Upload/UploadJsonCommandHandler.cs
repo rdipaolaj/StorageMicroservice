@@ -2,11 +2,12 @@
 using ssptb.pe.tdlt.storage.command.Upload;
 using ssptb.pe.tdlt.storage.common.Responses;
 using ssptb.pe.tdlt.storage.data.Repositories.Interfaces;
+using ssptb.pe.tdlt.storage.dto.File;
 using ssptb.pe.tdlt.storage.entities.Storage;
 using ssptb.pe.tdlt.storage.internalservices.Cloudinary;
 
 namespace ssptb.pe.tdlt.storage.commandhandler.Upload;
-public class UploadJsonCommandHandler : IRequestHandler<UploadJsonCommand, ApiResponse<bool>>
+public class UploadJsonCommandHandler : IRequestHandler<UploadJsonCommand, ApiResponse<FileUploadDataResponse>>
 {
     private readonly ICloudinaryService _cloudinaryService;
     private readonly IFileRepository _fileRepository;
@@ -17,12 +18,12 @@ public class UploadJsonCommandHandler : IRequestHandler<UploadJsonCommand, ApiRe
         _fileRepository = fileRepository;
     }
 
-    public async Task<ApiResponse<bool>> Handle(UploadJsonCommand request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<FileUploadDataResponse>> Handle(UploadJsonCommand request, CancellationToken cancellationToken)
     {
         // Validar que los datos del comando no sean nulos o inválidos
         if (string.IsNullOrEmpty(request.FileName) || string.IsNullOrEmpty(request.JsonContent) || string.IsNullOrEmpty(request.UserId))
         {
-            return ApiResponseHelper.CreateErrorResponse<bool>("FileName, JsonContent, or UserId is missing.", 400);
+            return ApiResponseHelper.CreateErrorResponse<FileUploadDataResponse>("FileName, JsonContent, or UserId is missing.", 400);
         }
 
         var uploadResult = await _cloudinaryService.UploadJsonAsync(request.FileName, request.JsonContent);
@@ -30,7 +31,7 @@ public class UploadJsonCommandHandler : IRequestHandler<UploadJsonCommand, ApiRe
         // Si la subida a Cloudinary falla, retornar el error
         if (!uploadResult.Success)
         {
-            return ApiResponseHelper.CreateErrorResponse<bool>($"Cloudinary upload failed: {uploadResult.Message}", uploadResult.StatusCode);
+            return ApiResponseHelper.CreateErrorResponse<FileUploadDataResponse>($"Cloudinary upload failed: {uploadResult.Message}", uploadResult.StatusCode);
         }
 
         var fileId = Guid.NewGuid().ToString();
@@ -50,10 +51,17 @@ public class UploadJsonCommandHandler : IRequestHandler<UploadJsonCommand, ApiRe
         // Si Couchbase no guarda bien los datos, devolver un error
         if (!couchbaseResult.Success)
         {
-            return ApiResponseHelper.CreateErrorResponse<bool>($"Failed to save metadata in Couchbase: {couchbaseResult.Message}", 500);
+            return ApiResponseHelper.CreateErrorResponse<FileUploadDataResponse>($"Failed to save metadata in Couchbase: {couchbaseResult.Message}", 500);
         }
 
+        var fileUploadDataResponse = new FileUploadDataResponse
+        {
+            FileId = fileId,
+            FileName = request.FileName,
+            PublicUrl = uploadResult.Data
+        };
+
         // Todo fue exitoso, retornar una respuesta exitosa
-        return ApiResponseHelper.CreateSuccessResponse(true, "File uploaded and metadata saved successfully.");
+        return ApiResponseHelper.CreateSuccessResponse(fileUploadDataResponse, "File uploaded and metadata saved successfully.");
     }
 }
