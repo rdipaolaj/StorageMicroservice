@@ -7,6 +7,7 @@ using ssptb.pe.tdlt.storage.data.Repositories.Interfaces;
 using ssptb.pe.tdlt.storage.data.Repositories;
 using ssptb.pe.tdlt.storage.data.Helpers;
 using MongoDB.Driver;
+using ssptb.pe.tdlt.storage.common.Helpers;
 
 namespace ssptb.pe.tdlt.storage.data;
 public static class DataConfiguration
@@ -15,6 +16,11 @@ public static class DataConfiguration
     {
         var serviceProvider = services.BuildServiceProvider();
         var mongoDbSettings = serviceProvider.GetService<IOptions<MongoDbSettings>>()?.Value;
+
+        if (EnvironmentHelper.IsDevelopment())
+        {
+            mongoDbSettings.ConnectionString = "mongodb://localhost:27017";
+        }
 
         if (mongoDbSettings == null)
         {
